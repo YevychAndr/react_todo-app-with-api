@@ -58,7 +58,7 @@ export const App: React.FC = () => {
     [todos, currentFilter],
   );
 
-  function onAdd({ userId, title, completed }: Omit<Todo, 'id'>) {
+  const onAdd = ({ userId, title, completed }: Omit<Todo, 'id'>) => {
     const currentTitleRef = titleRef.current;
 
     if (currentTitleRef) {
@@ -82,7 +82,7 @@ export const App: React.FC = () => {
           setTempTodo(null);
         });
     }
-  }
+  };
 
   const onDelete = useCallback((todoIds: number[]) => {
     setHasTitleFocus(true);

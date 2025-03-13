@@ -10,12 +10,12 @@ type Props = {
 };
 
 export const TodoItem: React.FC<Props> = ({
-  todo,
+  todo: { id, title, completed, userId }, // Деструктуризація з userId
   onDelete = () => {},
   onUpdate = () => [],
   isLoading,
 }) => {
-  const [editTitle, setEditTitle] = useState(todo.title);
+  const [editTitle, setEditTitle] = useState(title);
   const [hasEditTitleFocus, setHasEditTitleFocus] = useState(false);
   const titleEditRef = useRef<HTMLInputElement>(null);
 
@@ -27,16 +27,21 @@ export const TodoItem: React.FC<Props> = ({
     const formattedEditTitle = editTitle.trim();
 
     if (!formattedEditTitle) {
-      onDelete([todo.id]);
+      onDelete([id]);
 
       return;
     }
 
-    if (formattedEditTitle !== todo.title) {
+    if (formattedEditTitle !== title) {
       setEditTitle(formattedEditTitle);
       setHasEditTitleFocus(false);
 
-      const preparedEditTodoUpdate = { ...todo, title: formattedEditTitle };
+      const preparedEditTodoUpdate = {
+        id,
+        title: formattedEditTitle,
+        completed,
+        userId,
+      };
 
       onUpdate([preparedEditTodoUpdate]).forEach(promise => {
         promise.then(response => {
@@ -46,39 +51,43 @@ export const TodoItem: React.FC<Props> = ({
         });
       });
     } else {
-      setEditTitle(todo.title);
+      setEditTitle(title);
       setHasEditTitleFocus(false);
     }
   };
 
   const handleEditTodoSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
     handleTodoUpdate();
   };
 
   const handleTodoToggle = () => {
-    const preparedToggleTodoUpdate = { ...todo, completed: !todo.completed };
+    const preparedToggleTodoUpdate = {
+      id,
+      title,
+      completed: !completed,
+      userId,
+    };
 
     onUpdate([preparedToggleTodoUpdate]);
   };
 
   const handleTodoKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Escape') {
-      setEditTitle(todo.title);
+      setEditTitle(title);
       setHasEditTitleFocus(false);
     }
   };
 
   return (
-    <div data-cy="Todo" className={cn('todo', { completed: todo.completed })}>
+    <div data-cy="Todo" className={cn('todo', { completed })}>
       <label className="todo__status-label">
         {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
         <input
           data-cy="TodoStatus"
           type="checkbox"
           className="todo__status"
-          checked={todo.completed}
+          checked={completed}
           onChange={handleTodoToggle}
         />
       </label>
@@ -111,7 +120,7 @@ export const TodoItem: React.FC<Props> = ({
             type="button"
             className="todo__remove"
             data-cy="TodoDelete"
-            onClick={() => onDelete([todo.id])}
+            onClick={() => onDelete([id])}
           >
             ×
           </button>

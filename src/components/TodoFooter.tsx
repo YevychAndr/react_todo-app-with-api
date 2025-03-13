@@ -9,29 +9,6 @@ type Props = {
   onDelete: (todoIds: number[]) => void;
 };
 
-const filters = [
-  {
-    name: 'All',
-    href: '#/',
-    filter: Filters.All,
-    dataCy: 'FilterLinkAll',
-  },
-
-  {
-    name: 'Active',
-    href: '#/active',
-    filter: Filters.Active,
-    dataCy: 'FilterLinkActive',
-  },
-
-  {
-    name: 'Completed',
-    href: '#/completed',
-    filter: Filters.Completed,
-    dataCy: 'FilterLinkCompleted',
-  },
-];
-
 export const TodoFooter: React.FC<Props> = ({
   todos,
   currentFilter,
@@ -47,6 +24,25 @@ export const TodoFooter: React.FC<Props> = ({
     onDelete(todosCompletedId);
   };
 
+  // Створюємо мапу для атрибутів фільтрів
+  const filterAttributes = {
+    [Filters.All]: {
+      name: 'All',
+      href: '#/',
+      dataCy: 'FilterLinkAll',
+    },
+    [Filters.Active]: {
+      name: 'Active',
+      href: '#/active',
+      dataCy: 'FilterLinkActive',
+    },
+    [Filters.Completed]: {
+      name: 'Completed',
+      href: '#/completed',
+      dataCy: 'FilterLinkCompleted',
+    },
+  };
+
   return (
     <footer className="todoapp__footer" data-cy="Footer">
       <span className="todo-count" data-cy="TodosCounter">
@@ -54,19 +50,23 @@ export const TodoFooter: React.FC<Props> = ({
       </span>
 
       <nav className="filter" data-cy="Filter">
-        {filters.map(({ name, href, filter, dataCy }) => (
-          <a
-            key={filter}
-            href={href}
-            className={cn('filter__link', {
-              selected: currentFilter === filter,
-            })}
-            data-cy={dataCy}
-            onClick={() => onFilter(filter)}
-          >
-            {name}
-          </a>
-        ))}
+        {Object.values(Filters).map(filter => {
+          const { name, href, dataCy } = filterAttributes[filter];
+
+          return (
+            <a
+              key={filter}
+              href={href}
+              className={cn('filter__link', {
+                selected: currentFilter === filter,
+              })}
+              data-cy={dataCy}
+              onClick={() => onFilter(filter)}
+            >
+              {name}
+            </a>
+          );
+        })}
       </nav>
 
       <button

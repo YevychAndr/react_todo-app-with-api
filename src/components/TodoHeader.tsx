@@ -25,7 +25,7 @@ export const TodoHeader: React.FC<Props> = ({
 
   const todosAreCompleted = todos.every(todo => todo.completed);
 
-  function handleSubmit(event: React.FormEvent) {
+  const handleSubmit = (event: React.FormEvent) => {
     const formattedTitle = titleRef.current?.value.trim();
 
     event.preventDefault();
@@ -39,7 +39,7 @@ export const TodoHeader: React.FC<Props> = ({
     } else {
       onError(ErrorTypes.EmptyTitle);
     }
-  }
+  };
 
   const handleTodosToggle = () => {
     let todosDataUpdate;
